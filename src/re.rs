@@ -15,7 +15,7 @@ macro_rules! regex {
 
 /// Matches a regex to a string, then parses each capture group as necessary to
 /// produce a tuple of the desired return type.
-pub fn parse_match<T>(re: &Regex, s: &str) -> Result<T, Box<dyn error::Error>>
+pub fn parse_with_regex<T>(re: &Regex, s: &str) -> Result<T, Box<dyn error::Error>>
 where
     T: MatchTuple,
 {
@@ -41,7 +41,7 @@ macro_rules! impl_match_tuple {
         where
             $(
                 $T: std::str::FromStr,
-                <$T as std::str::FromStr>::Err: 'static + std::error::Error,
+                <$T as std::str::FromStr>::Err: std::error::Error + 'static,
             )*
         {
             fn len() -> usize {
@@ -95,14 +95,14 @@ impl_match_tuple!(A, B, C, D, E, F);
 impl_match_tuple!(A, B, C, D, E, F, G);
 
 #[cfg(test)]
-mod test {
-    use crate::re;
+mod tests {
+    use super::*;
 
     #[test]
     fn test_parse_match() {
         let re = regex!(r"^(.+) stole (\d+) cakes.$");
         let (name, count): (String, usize) =
-            re::parse_match(re, "Lex Luthor stole 40 cakes.").unwrap();
+            parse_with_regex(re, "Lex Luthor stole 40 cakes.").unwrap();
         assert_eq!(name, "Lex Luthor".to_owned());
         assert_eq!(count, 40);
     }
