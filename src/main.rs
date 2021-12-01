@@ -3,6 +3,7 @@ mod coords;
 mod days;
 mod harness;
 mod input;
+mod ints;
 mod nums;
 mod panics;
 mod re;

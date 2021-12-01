@@ -38,6 +38,13 @@ pub trait Num:
         }
     }
 
+    /// Like `%` or `.rem()` except it always returns a non-negative result even
+    /// if one or both of the inputs are negative.
+    fn modulus(self, rhs: Self) -> Self {
+        let abs_rhs = rhs.abs();
+        ((self % abs_rhs) + abs_rhs) % abs_rhs
+    }
+
     /// Negates the number if the number is signed, overflowing otherwise. This may
     /// be safely called on a type `T` if we have observed a negative value of type
     /// `T`.
@@ -72,10 +79,10 @@ impl<T> Num for T where
 {
 }
 
-trait Signed: Num + Neg {}
+pub trait Signed: Num + Neg {}
 
 impl<T> Signed for T where T: Num + Neg {}
 
-trait Int: Num + Eq + Ord {}
+pub trait Int: Num + Eq + Ord {}
 
 impl<T> Int for T where T: Num + Eq + Ord {}
