@@ -1,4 +1,4 @@
-use crate::input::RawInput;
+use crate::harness::input::RawInput;
 
 pub fn solve_part1(input: RawInput) -> i32 {
     let lines = input.per_line(|line| line.single::<String>());

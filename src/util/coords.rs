@@ -1,4 +1,4 @@
-use crate::nums::Num;
+use crate::util::nums::Num;
 use derive_more::{Add, AddAssign, Neg, Product, Sub, SubAssign, Sum};
 use std::ops::{Div, DivAssign, Mul, MulAssign};
 

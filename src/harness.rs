@@ -1,11 +1,14 @@
-use crate::input::RawInput;
-use crate::{panics, regex};
+use crate::regex;
+use input::RawInput;
 use std::fmt::{Debug, Display};
 use std::panic::RefUnwindSafe;
 use std::path::Path;
 use std::str::FromStr;
 use std::time::Instant;
 use std::{error, fs};
+
+pub mod input;
+mod panics;
 
 pub fn solve<F1, F2, O1, O2>(day: usize, solve_part1: F1, solve_part2: F2)
 where

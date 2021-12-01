@@ -1,4 +1,4 @@
-use crate::nums::Int;
+use crate::util::nums::Int;
 
 pub fn gcd<T: Int>(a: T, b: T) -> T {
     let (x, y) = extended_euclidean(a, b);

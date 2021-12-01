@@ -1,12 +1,7 @@
 #![allow(dead_code)]
-mod coords;
 mod days;
 mod harness;
-mod input;
-mod ints;
-mod nums;
-mod panics;
-mod re;
+mod util;
 
 use days::day1 as day;
 const DAY: usize = 1;

@@ -1,5 +1,5 @@
-use crate::re;
-use crate::re::MatchTuple;
+use crate::util::re;
+use crate::util::re::MatchTuple;
 use regex::Regex;
 use std::fmt::Debug;
 use std::str::FromStr;
