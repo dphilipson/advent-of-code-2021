@@ -8,6 +8,10 @@ use std::str::FromStr;
 pub struct LineInput<'a>(&'a str);
 
 impl<'a> LineInput<'a> {
+    pub fn new(s: &'a str) -> Self {
+        Self(s)
+    }
+
     pub fn single<T>(&self) -> T
     where
         T: FromStr,

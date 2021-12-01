@@ -3,8 +3,7 @@ mod days;
 mod harness;
 mod util;
 
-use days::day1 as day;
-const DAY: usize = 1;
+use crate::days::{day, DAY};
 
 fn main() {
     harness::solve(DAY, day::solve_part1, day::solve_part2);
