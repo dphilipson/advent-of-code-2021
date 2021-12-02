@@ -15,10 +15,7 @@ macro_rules! regex {
 
 /// Matches a regex to a string, then parses each capture group as necessary to
 /// produce a tuple of the desired return type.
-pub fn parse_with_regex<T>(re: &Regex, s: &str) -> Result<T, Box<dyn error::Error>>
-where
-    T: MatchTuple,
-{
+pub fn parse_with_regex<T: MatchTuple>(re: &Regex, s: &str) -> Result<T, Box<dyn error::Error>> {
     let caps = re.captures(s).ok_or("Regex did not match string.")?;
     if caps.len() != T::len() + 1 {
         Err(format!(
