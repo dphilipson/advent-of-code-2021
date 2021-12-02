@@ -1,7 +1,6 @@
 use crate::harness::input::RawInput;
-use crate::regex;
 use crate::util::coords::Coord2;
-use strum_macros::EnumString;
+use crate::{regex, string_enum};
 
 pub fn solve_part1(input: RawInput) -> i32 {
     let moves = parse_moves(input);
@@ -26,10 +25,20 @@ fn parse_moves(input: RawInput) -> Vec<(Direction, i32)> {
     input.per_line(|line| line.parse_with_regex::<(Direction, i32)>(re))
 }
 
-#[derive(Copy, Clone, Debug)]
-struct Move {
-    direction: Direction,
-    step: i32,
+string_enum!(Direction {
+    Forward = "forward",
+    Down = "down",
+    Up = "up",
+});
+
+impl Direction {
+    fn coord(self) -> Coord2<i32> {
+        match self {
+            Direction::Forward => Coord2(1, 0),
+            Direction::Down => Coord2(0, 1),
+            Direction::Up => Coord2(0, -1),
+        }
+    }
 }
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -54,24 +63,6 @@ impl State {
                 position,
                 aim: aim - step,
             },
-        }
-    }
-}
-
-#[derive(Copy, Clone, Debug, EnumString)]
-#[strum(serialize_all = "lowercase")]
-enum Direction {
-    Forward,
-    Down,
-    Up,
-}
-
-impl Direction {
-    fn coord(self) -> Coord2<i32> {
-        match self {
-            Direction::Forward => Coord2(1, 0),
-            Direction::Down => Coord2(0, 1),
-            Direction::Up => Coord2(0, -1),
         }
     }
 }
