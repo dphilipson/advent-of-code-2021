@@ -32,12 +32,15 @@ impl<'a> LineInput<'a> {
         self.0.split(pattern).map(|s| s.parse().unwrap()).collect()
     }
 
-    pub fn split_on_spaces<T>(&self) -> Vec<T>
+    pub fn split_whitespace<T>(&self) -> Vec<T>
     where
         T: FromStr,
         <T as FromStr>::Err: Debug,
     {
-        self.split(" ")
+        self.0
+            .split_ascii_whitespace()
+            .map(|s| s.parse().unwrap())
+            .collect()
     }
 
     pub fn parse_with_regex<T>(&self, re: &Regex) -> T
