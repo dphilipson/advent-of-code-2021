@@ -1,5 +1,5 @@
-pub mod day2;
+pub mod day3;
 
-pub use day2 as day;
+pub use day3 as day;
 
-pub const DAY: usize = 2;
+pub const DAY: usize = 3;
