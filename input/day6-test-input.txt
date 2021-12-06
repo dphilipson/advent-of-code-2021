@@ -1,3 +1,4 @@
-Part 1 expected: 
-Part 2 expected: 
+Part 1 expected: 5934
+Part 2 expected: 26984457539
 
+3,4,3,1,2
