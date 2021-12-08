@@ -24,57 +24,64 @@ fn parse_line(line: &str) -> (Vec<&str>, Vec<&str>) {
 
 fn solve_line(line: &str) -> usize {
     let (all_patterns, output_patterns) = parse_line(line);
-    let legend = make_legend(&all_patterns);
-    apply_legend(&legend, &output_patterns)
+    let decoder = Decoder::new(&all_patterns);
+    decoder.decode_digits(&output_patterns)
 }
 
-fn make_legend(patterns: &[&str]) -> HashMap<String, usize> {
-    let patterns = patterns.iter().map(|s| sort_str(s)).collect::<Vec<_>>();
-    let char_counts = count_chars(&patterns);
-    let bottom_left = ('a'..='g').find(|c| char_counts[c] == 4).unwrap();
-    let top_left = ('a'..='g').find(|c| char_counts[c] == 6).unwrap();
-    let bottom_or_center1 = ('a'..='g').find(|c| char_counts[c] == 7).unwrap();
-    let bottom_or_center2 = ('a'..='g').filter(|c| char_counts[c] == 7).nth(1).unwrap();
-    let decode_pattern = |s: &str| match s.len() {
-        2 => 1,
-        3 => 7,
-        4 => 4,
-        5 if s.contains(bottom_left) => 2,
-        5 if s.contains(top_left) => 5,
-        5 => 3,
-        6 if !s.contains(bottom_left) => 9,
-        6 if s.contains(bottom_or_center1) && s.contains(bottom_or_center2) => 6,
-        6 => 0,
-        7 => 8,
-        _ => unreachable!(),
-    };
-    patterns
-        .into_iter()
-        .map(|pattern| {
-            let value = decode_pattern(&pattern);
-            (pattern, value)
-        })
-        .collect()
+#[derive(Copy, Clone, Debug)]
+struct Decoder {
+    bottom_left: char,
+    top_left: char,
+    bottom_and_center: [char; 2],
 }
 
-fn count_chars(patterns: &[String]) -> HashMap<char, usize> {
+impl Decoder {
+    fn new(patterns: &[&str]) -> Self {
+        let char_counts = count_chars(patterns);
+        let mut bottom_and_center = ('a'..='g').filter(|c| char_counts[c] == 7);
+        Self {
+            bottom_left: ('a'..='g').find(|c| char_counts[c] == 4).unwrap(),
+            top_left: ('a'..='g').find(|c| char_counts[c] == 6).unwrap(),
+            bottom_and_center: [
+                bottom_and_center.next().unwrap(),
+                bottom_and_center.next().unwrap(),
+            ],
+        }
+    }
+
+    fn decode_digits(&self, digits: &[&str]) -> usize {
+        digits
+            .iter()
+            .fold(0, |acc, digit| 10 * acc + self.decode_digit(digit))
+    }
+
+    fn decode_digit(&self, s: &str) -> usize {
+        let &Self {
+            bottom_left,
+            top_left,
+            bottom_and_center,
+        } = self;
+        match s.len() {
+            2 => 1,
+            3 => 7,
+            4 => 4,
+            5 if s.contains(bottom_left) => 2,
+            5 if s.contains(top_left) => 5,
+            5 => 3,
+            6 if !s.contains(bottom_left) => 9,
+            6 if bottom_and_center.iter().all(|&seg| s.contains(seg)) => 6,
+            6 => 0,
+            7 => 8,
+            _ => unreachable!(),
+        }
+    }
+}
+
+fn count_chars(patterns: &[&str]) -> HashMap<char, usize> {
     let mut result = HashMap::new();
     patterns
         .iter()
-        .flat_map(|s| s.chars())
+        .flat_map(|&s| s.chars())
         .for_each(|c| *result.entry(c).or_default() += 1);
     result
-}
-
-fn apply_legend(legend: &HashMap<String, usize>, digits: &[&str]) -> usize {
-    digits
-        .iter()
-        .map(|&s| legend[&sort_str(s)])
-        .fold(0, |acc, digit| 10 * acc + digit)
-}
-
-fn sort_str(s: &str) -> String {
-    let mut bytes = Vec::from_iter(s.bytes());
-    bytes.sort();
-    String::from_utf8(bytes).unwrap()
 }

@@ -34,7 +34,7 @@ fn solve(input: RawInput, count_diagonals: bool) -> usize {
             } else {
                 (x2, y2, x1, y1)
             };
-            let y_sign = if y1 < y2 { 1 } else { -1 };
+            let y_sign = (y2 - y1).signum();
             for i in 0..=x2 - x1 {
                 *point_counts.entry((x1 + i, y1 + y_sign * i)).or_default() += 1;
             }
