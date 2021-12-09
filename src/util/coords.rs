@@ -121,20 +121,16 @@ macro_rules! neighbors_fn {
 }
 
 macro_rules! orthogonal_neighbors_fn {
-    (@inner $self:ident $result:ident $neighbor:ident) => {
-        $result.push($neighbor);
-    };
-    (@inner $self:ident $result:ident $neighbor:ident $head_field:tt $($rest_field:tt)*) => {
-        for x in [$self.$head_field - T::from(1), $self.$head_field + T::from(1)] {
-            $neighbor.$head_field = x;
-            orthogonal_neighbors_fn!(@inner $self $result $neighbor $($rest_field)*);
-        }
-    };
     ($($field:tt)*) => {
         pub fn orthogonal_neighbors(self) -> Vec<Self> {
             let mut result = vec![];
-            let mut neighbor = Self::default();
-            orthogonal_neighbors_fn!(@inner self result neighbor $($field)*);
+            $(
+                for x in [self.$field - T::from(1), self.$field + T::from(1)] {
+                    let mut neighbor = self;
+                    neighbor.$field = x;
+                    result.push(neighbor);
+                }
+            )*
             result
         }
     };

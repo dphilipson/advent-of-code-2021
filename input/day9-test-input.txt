@@ -1,3 +1,8 @@
-Part 1 expected: 
-Part 2 expected: 
+Part 1 expected: 15
+Part 2 expected: 1134
 
+2199943210
+3987894921
+9856789892
+8767896789
+9899965678
