@@ -61,6 +61,8 @@ macro_rules! coord_impls {
         impl<T: Num> $name<T> {
             neighbors_fn!($($field)*);
 
+            orthogonal_neighbors_fn!($($field)*);
+
             pub fn manhattan_norm(self) -> T {
                 T::default() $(+ self.$field.abs())*
             }
@@ -118,6 +120,26 @@ macro_rules! neighbors_fn {
     };
 }
 
+macro_rules! orthogonal_neighbors_fn {
+    (@inner $self:ident $result:ident $neighbor:ident) => {
+        $result.push($neighbor);
+    };
+    (@inner $self:ident $result:ident $neighbor:ident $head_field:tt $($rest_field:tt)*) => {
+        for x in [$self.$head_field - T::from(1), $self.$head_field + T::from(1)] {
+            $neighbor.$head_field = x;
+            orthogonal_neighbors_fn!(@inner $self $result $neighbor $($rest_field)*);
+        }
+    };
+    ($($field:tt)*) => {
+        pub fn orthogonal_neighbors(self) -> Vec<Self> {
+            let mut result = vec![];
+            let mut neighbor = Self::default();
+            orthogonal_neighbors_fn!(@inner self result neighbor $($field)*);
+            result
+        }
+    };
+}
+
 coord_impls!(Coord2, 0, 1);
 coord_impls!(Coord3, 0, 1, 2);
 coord_impls!(Coord4, 0, 1, 2, 3);
@@ -134,7 +156,7 @@ mod tests {
         assert_eq!(c * 10, Coord2(10, -20));
         assert_eq!(c.manhattan_norm(), 3);
         let neighbors_set: HashSet<_> = c.neighbors().into_iter().collect();
-        let neighbors_expected: HashSet<_> = vec![
+        let neighbors_expected: HashSet<_> = [
             Coord2(0, -3),
             Coord2(0, -2),
             Coord2(0, -1),
@@ -146,7 +168,13 @@ mod tests {
         ]
         .into_iter()
         .collect();
-        assert_eq!(neighbors_set, neighbors_expected)
+        assert_eq!(neighbors_set, neighbors_expected);
+        let neighbors_set: HashSet<_> = c.orthogonal_neighbors().into_iter().collect();
+        let neighbors_expected: HashSet<_> =
+            [Coord2(0, -3), Coord2(0, -1), Coord2(2, -3), Coord2(2, -1)]
+                .into_iter()
+                .collect();
+        assert_eq!(neighbors_set, neighbors_expected);
     }
 
     #[test]

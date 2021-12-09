@@ -36,10 +36,10 @@ fn euclidean_step<T: Int>((old_x, x): (T, T), quotient: T) -> (T, T) {
 /// `(a, n)`, which represents `x = a (mod n)`. The result is given in the
 /// same format `(b, m)`, meaning the solution to the system is `x = b (mod m)`.
 pub fn solve_congruences<T: Int>(congruences: &[(T, T)]) -> Option<(T, T)> {
-    let (head, rest) = congruences.split_first()?;
-    let mut acc = *head;
-    for c in rest {
-        acc = solve_congruence_pair(acc, *c)?;
+    let (&head, rest) = congruences.split_first()?;
+    let mut acc = head;
+    for &c in rest {
+        acc = solve_congruence_pair(acc, c)?;
     }
     Some(acc)
 }
