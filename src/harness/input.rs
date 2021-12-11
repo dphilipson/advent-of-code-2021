@@ -2,10 +2,19 @@ use crate::util::re;
 use crate::util::re::MatchTuple;
 use regex::Regex;
 use std::fmt::Debug;
+use std::ops::Deref;
 use std::str::FromStr;
 
 #[derive(Copy, Clone, Debug)]
 pub struct LineInput<'a>(&'a str);
+
+impl<'a> Deref for LineInput<'a> {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        self.0
+    }
+}
 
 impl<'a> LineInput<'a> {
     pub fn new(s: &'a str) -> Self {
@@ -22,6 +31,14 @@ impl<'a> LineInput<'a> {
 
     pub fn chars(&self) -> Vec<char> {
         self.0.chars().collect()
+    }
+
+    pub fn bytes(&self) -> Vec<u8> {
+        self.0.bytes().collect()
+    }
+
+    pub fn digits(&self) -> Vec<u32> {
+        self.0.bytes().map(|b| (b - b'0') as u32).collect()
     }
 
     pub fn split<T>(&self, pattern: &str) -> Vec<T>
@@ -53,6 +70,14 @@ impl<'a> LineInput<'a> {
 
 #[derive(Copy, Clone, Debug)]
 pub struct RawInput<'a>(&'a str);
+
+impl<'a> Deref for RawInput<'a> {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        self.0
+    }
+}
 
 impl<'a> RawInput<'a> {
     pub fn new(s: &'a str) -> Self {

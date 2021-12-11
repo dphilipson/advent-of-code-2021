@@ -1,10 +1,10 @@
 use crate::harness::input::RawInput;
-use crate::util::coords::Coord2;
+use crate::util::grid::Grid;
 use crate::util::search::bfs;
 use ndarray::Array2;
 
 pub fn solve_part1(input: RawInput) -> u32 {
-    let grid = parse_grid(input);
+    let grid = Grid::parse_digits(&input);
     get_low_points(&grid)
         .into_iter()
         .map(|ij| grid[ij] + 1)
@@ -12,7 +12,7 @@ pub fn solve_part1(input: RawInput) -> u32 {
 }
 
 pub fn solve_part2(input: RawInput) -> usize {
-    let grid = parse_grid(input);
+    let grid = Grid::parse_digits(&input);
     let mut basin_sizes = get_low_points(&grid)
         .into_iter()
         .map(|low_point| get_basin_size(&grid, low_point))
@@ -35,32 +35,22 @@ fn parse_grid(input: RawInput) -> Array2<u32> {
     result
 }
 
-fn get_low_points(grid: &Array2<u32>) -> Vec<[usize; 2]> {
+fn get_low_points(grid: &Grid<u32>) -> Vec<[usize; 2]> {
     grid.indexed_iter()
-        .filter(|&((i, j), &value)| neighbors(&grid, [i, j]).iter().all(|&ij| grid[ij] > value))
+        .filter(|&((i, j), &value)| grid.orthogonal_neighbors([i, j]).all(|ij| grid[ij] > value))
         .map(|((i, j), _)| [i, j])
         .collect()
 }
 
-fn get_basin_size(grid: &Array2<u32>, low_point: [usize; 2]) -> usize {
+fn get_basin_size(grid: &Grid<u32>, low_point: [usize; 2]) -> usize {
     let search_result = bfs::search(
         low_point,
         |&ij| {
-            neighbors(&grid, ij)
-                .into_iter()
+            grid.orthogonal_neighbors(ij)
                 .filter(|&ij| grid[ij] != 9)
                 .collect()
         },
         |_| false,
     );
     search_result.seen_states.len()
-}
-
-fn neighbors(grid: &Array2<u32>, [i, j]: [usize; 2]) -> Vec<[usize; 2]> {
-    Coord2(i as i32, j as i32)
-        .orthogonal_neighbors()
-        .into_iter()
-        .map(|Coord2(i, j)| [i as usize, j as usize])
-        .filter(|&[i, j]| i < grid.nrows() && j < grid.ncols())
-        .collect()
 }

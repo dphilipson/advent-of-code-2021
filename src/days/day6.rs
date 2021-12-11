@@ -31,7 +31,7 @@ fn solve(input: RawInput, days: usize) -> i64 {
 }
 
 fn matrix_pow(mut matrix: Array2<i64>, mut n: usize) -> Array2<i64> {
-    let mut result = matrix_identity(matrix.nrows());
+    let mut result = Array2::eye(matrix.nrows());
     loop {
         if n & 1 == 1 {
             result = result.dot(&matrix);
@@ -42,12 +42,4 @@ fn matrix_pow(mut matrix: Array2<i64>, mut n: usize) -> Array2<i64> {
         }
         matrix = matrix.dot(&matrix);
     }
-}
-
-fn matrix_identity(n: usize) -> Array2<i64> {
-    let mut result = Array2::zeros((n, n));
-    for i in 0..n {
-        result[[i, i]] = 1;
-    }
-    result
 }

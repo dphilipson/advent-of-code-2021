@@ -1,4 +1,5 @@
 pub mod coords;
+pub mod grid;
 pub mod ints;
 pub mod nums;
 pub mod re;
