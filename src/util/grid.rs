@@ -2,25 +2,11 @@ use crate::harness::input::{LineInput, RawInput};
 use crate::util::coords::Coord2;
 use ndarray::Array2;
 use std::fmt::Debug;
-use std::ops::{Deref, DerefMut};
+use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Grid<T>(pub Array2<T>);
-
-impl<T> Deref for Grid<T> {
-    type Target = Array2<T>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<T> DerefMut for Grid<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
 
 impl Grid<u32> {
     pub fn parse_digits(s: &str) -> Self {
@@ -50,7 +36,29 @@ where
     }
 }
 
+impl<T> Index<[usize; 2]> for Grid<T> {
+    type Output = T;
+
+    fn index(&self, index: [usize; 2]) -> &Self::Output {
+        self.0.index(index)
+    }
+}
+
+impl<T> IndexMut<[usize; 2]> for Grid<T> {
+    fn index_mut(&mut self, index: [usize; 2]) -> &mut Self::Output {
+        self.0.index_mut(index)
+    }
+}
+
 impl<T> Grid<T> {
+    pub fn nrows(&self) -> usize {
+        self.0.nrows()
+    }
+
+    pub fn ncols(&self) -> usize {
+        self.0.ncols()
+    }
+
     pub fn neighbors(&self, [i, j]: [usize; 2]) -> impl Iterator<Item = [usize; 2]> {
         let nrows = self.nrows();
         let ncols = self.ncols();
@@ -107,7 +115,7 @@ mod tests {
     #[test]
     fn test_parse_digits() {
         let input = RawInput::new("123\n456\n789");
-        let grid = Grid::parse_digits(&input);
+        let grid = Grid::parse_digits(input.as_str());
         let expected = Grid(ndarray::arr2(&[[1, 2, 3], [4, 5, 6], [7, 8, 9]]));
         assert_eq!(grid, expected);
     }
