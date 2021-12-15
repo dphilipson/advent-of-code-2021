@@ -27,7 +27,7 @@ fn solve(input: RawInput, n_steps: usize) -> u64 {
 }
 
 fn parse_input(input: RawInput) -> Input {
-    let mut lines = input.lines();
+    let mut lines = input.as_str().lines();
     let template = lines.next().unwrap().chars().collect();
     lines.next().unwrap();
     let rules = lines

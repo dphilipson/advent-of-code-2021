@@ -72,6 +72,7 @@ fn count_routes(input: RawInput, can_double_visit: bool) -> usize {
 
 fn parse_paths<'a>(input: &'a RawInput) -> HashMap<&'a str, Vec<&'a str>> {
     let paths = input
+        .as_str()
         .lines()
         .map(|line| line.split('-').collect::<Vec<_>>())
         .collect::<Vec<_>>();

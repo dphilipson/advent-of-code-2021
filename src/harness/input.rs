@@ -2,23 +2,18 @@ use crate::util::re;
 use crate::util::re::MatchTuple;
 use regex::Regex;
 use std::fmt::Debug;
-use std::ops::Deref;
 use std::str::FromStr;
 
 #[derive(Copy, Clone, Debug)]
 pub struct LineInput<'a>(&'a str);
 
-impl<'a> Deref for LineInput<'a> {
-    type Target = str;
-
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
-}
-
 impl<'a> LineInput<'a> {
     pub fn new(s: &'a str) -> Self {
         Self(s)
+    }
+
+    pub fn as_str(&self) -> &'a str {
+        self.0
     }
 
     pub fn single<T>(&self) -> T
@@ -71,17 +66,13 @@ impl<'a> LineInput<'a> {
 #[derive(Copy, Clone, Debug)]
 pub struct RawInput<'a>(&'a str);
 
-impl<'a> Deref for RawInput<'a> {
-    type Target = str;
-
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
-}
-
 impl<'a> RawInput<'a> {
     pub fn new(s: &'a str) -> Self {
         Self(s)
+    }
+
+    pub fn as_str(&self) -> &'a str {
+        self.0
     }
 
     pub fn single_line<F, T>(&self, f: F) -> T
