@@ -3,14 +3,15 @@ use std::collections::{HashSet, VecDeque};
 use std::hash::Hash;
 use std::rc::Rc;
 
-pub fn search<S, FNext, FGoal>(
+pub fn search<S, FNext, I, FGoal>(
     initial_state: S,
     get_next_states: FNext,
     is_goal: FGoal,
 ) -> SearchResult<S>
 where
     S: Eq + Hash,
-    FNext: Fn(&S) -> Vec<S>,
+    FNext: Fn(&S) -> I,
+    I: IntoIterator<Item = S>,
     FGoal: Fn(&S) -> bool,
 {
     let (seen_states, reached_goal) = {

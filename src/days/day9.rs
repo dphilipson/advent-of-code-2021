@@ -45,11 +45,7 @@ fn get_low_points(grid: &Grid<u32>) -> Vec<[usize; 2]> {
 fn get_basin_size(grid: &Grid<u32>, low_point: [usize; 2]) -> usize {
     let search_result = bfs::search(
         low_point,
-        |&ij| {
-            grid.orthogonal_neighbors(ij)
-                .filter(|&ij| grid[ij] != 9)
-                .collect()
-        },
+        |&ij| grid.orthogonal_neighbors(ij).filter(|&ij| grid[ij] != 9),
         |_| false,
     );
     search_result.seen_states.len()

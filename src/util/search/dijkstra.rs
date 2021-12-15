@@ -4,14 +4,15 @@ use std::collections::{BinaryHeap, HashMap};
 use std::hash::Hash;
 use std::rc::Rc;
 
-pub fn search<S, FNext, FGoal>(
+pub fn search<S, FNext, I, FGoal>(
     initial_state: S,
     get_next_states: FNext,
     is_goal: FGoal,
 ) -> SearchResult<S>
 where
     S: Eq + Hash,
-    FNext: Fn(&S) -> Vec<(S, Distance)>,
+    FNext: Fn(&S) -> I,
+    I: IntoIterator<Item = (S, Distance)>,
     FGoal: Fn(&S) -> bool,
 {
     let (seen_states, reached_goal) = {
@@ -167,12 +168,7 @@ mod tests {
     ) {
         let results = search(
             start,
-            |&node| {
-                graph[node]
-                    .iter()
-                    .map(|&Edge { node, cost }| (node, cost))
-                    .collect()
-            },
+            |&node| graph[node].iter().map(|&Edge { node, cost }| (node, cost)),
             |&node| node == goal,
         );
         let path = results

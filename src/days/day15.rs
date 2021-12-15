@@ -20,7 +20,6 @@ fn shortest_path_length(grid: &Grid<u32>) -> usize {
         |&ij| {
             grid.orthogonal_neighbors(ij)
                 .map(|neighbor| (neighbor, grid[neighbor] as usize))
-                .collect()
         },
         |&[i, j]| i == grid.nrows() - 1 && j == grid.ncols() - 1,
     )
