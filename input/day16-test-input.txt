@@ -1,3 +1,4 @@
-Part 1 expected: 
-Part 2 expected: 
+Part 1 expected: 11
+Part 2 expected: 9
 
+CE00C43D881120
