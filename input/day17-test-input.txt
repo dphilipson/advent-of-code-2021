@@ -1,3 +1,4 @@
-Part 1 expected: 
-Part 2 expected: 
+Part 1 expected: 45
+Part 2 expected: 112
 
+target area: x=20..30, y=-10..-5
