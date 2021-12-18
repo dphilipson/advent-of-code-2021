@@ -25,6 +25,7 @@ pub fn solve_part2(input: RawInput) -> u32 {
 #[derive(Copy, Clone, Debug)]
 enum Token {
     PairStart,
+    PairEnd,
     Num(u32),
 }
 
@@ -49,6 +50,7 @@ impl FromStr for SnailfishNum {
             .iter()
             .filter_map(|&b| match b {
                 b'[' => Some(Token::PairStart),
+                b']' => Some(Token::PairEnd),
                 b'0'..=b'9' => Some(Token::Num((b - b'0') as u32)),
                 _ => None,
             })
@@ -63,6 +65,7 @@ impl SnailfishNum {
         tokens.push(Token::PairStart);
         tokens.extend(&self.0);
         tokens.extend(&rhs.0);
+        tokens.push(Token::PairEnd);
         let mut result = Self(tokens);
         result.reduce();
         result
@@ -86,8 +89,6 @@ impl SnailfishNum {
 
     fn find_explode_index(&self) -> Option<usize> {
         let mut depth = 0;
-        // true on stack represents a number, false a pairstart.
-        let mut stack = vec![];
         for (i, &token) in self.0.iter().enumerate() {
             match token {
                 Token::PairStart => {
@@ -95,18 +96,11 @@ impl SnailfishNum {
                     if depth > 4 {
                         return Some(i);
                     }
-                    stack.push(false);
                 }
-                Token::Num(_) => {
-                    stack.push(true);
-                    while stack.len() > 2 && stack[stack.len() - 1] && stack[stack.len() - 2] {
-                        for _ in 0..3 {
-                            stack.pop();
-                        }
-                        stack.push(true);
-                        depth -= 1;
-                    }
+                Token::PairEnd => {
+                    depth -= 1;
                 }
+                _ => (),
             }
         }
         None
@@ -122,7 +116,7 @@ impl SnailfishNum {
     fn explode_at(&mut self, i: usize) {
         let left = self.0[i + 1].downcast_to_num();
         let right = self.0[i + 2].downcast_to_num();
-        self.0.splice(i..i + 3, [Token::Num(0)]);
+        self.0.splice(i..i + 4, [Token::Num(0)]);
         for j in (0..i).rev() {
             match self.0[j] {
                 Token::Num(n) => {
@@ -147,27 +141,28 @@ impl SnailfishNum {
         let n = self.0[i].downcast_to_num();
         self.0.splice(
             i..i + 1,
-            [Token::PairStart, Token::Num(n / 2), Token::Num((n + 1) / 2)],
+            [
+                Token::PairStart,
+                Token::Num(n / 2),
+                Token::Num((n + 1) / 2),
+                Token::PairEnd,
+            ],
         );
     }
 
     fn get_magnitude(&self) -> u32 {
         let mut stack = vec![];
         for &token in &self.0 {
-            stack.push(token);
-            while stack.len() > 2 {
-                if let Token::Num(top) = stack[stack.len() - 1] {
-                    if let Token::Num(second_top) = stack[stack.len() - 2] {
-                        for _ in 0..3 {
-                            stack.pop();
-                        }
-                        stack.push(Token::Num(2 * top + 3 * second_top));
-                        continue;
-                    }
+            match token {
+                Token::Num(n) => stack.push(n),
+                Token::PairEnd => {
+                    let right = stack.pop().unwrap();
+                    let left = stack.pop().unwrap();
+                    stack.push(3 * left + 2 * right);
                 }
-                break;
+                _ => (),
             }
         }
-        stack[0].downcast_to_num()
+        stack.pop().unwrap()
     }
 }
