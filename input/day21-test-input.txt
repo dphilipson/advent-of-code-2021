@@ -1,3 +1,5 @@
-Part 1 expected: 
-Part 2 expected: 
+Part 1 expected: 739785
+Part 2 expected: 444356092776315
 
+Player 1 starting position: 4
+Player 2 starting position: 8
