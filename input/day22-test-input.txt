@@ -1,5 +1,5 @@
 Part 1 expected: 474140
-Part 2 expected:
+Part 2 expected: 2758514936282235
 
 on x=-5..47,y=-31..22,z=-19..33
 on x=-44..5,y=-27..21,z=-14..35
